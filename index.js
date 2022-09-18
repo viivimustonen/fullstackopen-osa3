@@ -29,21 +29,21 @@ let persons = [
 
   app.use(express.json())
 
+  app.get('/', (req, res) => {
+    res.send('<h1>Hello World!</h1>')
+  })
 
+//Info text
   app.get('/info', (request, response) => {
     response.send(`<p>Phonebook has info for ${persons.length} people</p> <p>${new Date()}</p>` )
 })
 
-  app.get('/', (req, res) => {
-    res.send('<h1>Hello World!</h1>')
-  })
-  
+  //Get all persons
   app.get('/api/persons', (req, res) => {
     res.json(persons)
   })
 
-//POST http://localhost:3001/api/persons
-//Content-Type: application/json
+
 
 //Get specific person
 app.get('/api/persons/:id', (request, response) => {
@@ -66,6 +66,46 @@ app.get('/api/persons/:id', (request, response) => {
   
     response.status(204).end()
     console.log("Person deleted")
+  })
+
+  const generateId = () => {
+    const maxId = persons.length > 0
+      ? Math.max(...persons.map(n => n.id))
+      : 0
+    return maxId + 1
+  }
+  
+  //Post new person
+  app.post('/api/persons', (request, response) => {
+    const body = request.body
+  
+    if (!body.name) {
+      return response.status(400).json({ 
+        error: 'Name missing'  
+      })
+    } 
+    
+    if (!body.number) {
+        return response.status(400).json({ 
+          error: 'Number is missing' 
+        })
+    }
+    
+    if (persons.some((person) => person.name === body.name)) {
+        return response.status(400).json({
+          error: "Name must be unique",
+        })
+    }
+  
+    const person = {
+      name: body.name,
+      number: body.number,
+      id: generateId()
+    }
+  
+    persons = persons.concat(person)
+  
+    response.json(person)
   })
   
   const PORT = 3001
