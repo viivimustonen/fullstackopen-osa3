@@ -58,6 +58,15 @@ app.get('/api/persons/:id', (request, response) => {
       console.log("Wrong ID")
     }
   })
+
+  //Delete person
+  app.delete('/api/persons/:id', (request, response) => {
+    const id = Number(request.params.id)
+    persons = persons.filter(person => person.id !== id)
+  
+    response.status(204).end()
+    console.log("Person deleted")
+  })
   
   const PORT = 3001
   app.listen(PORT)
