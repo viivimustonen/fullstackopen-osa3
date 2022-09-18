@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 
+
 console.log('hello world')
 
 let persons = [
@@ -28,6 +29,10 @@ let persons = [
 
   app.use(express.json())
 
+
+  app.get('/info', (request, response) => {
+    response.send(`<p>Phonebook has info for ${persons.length} people</p> <p>${new Date()}</p>` )
+})
 
   app.get('/', (req, res) => {
     res.send('<h1>Hello World!</h1>')
